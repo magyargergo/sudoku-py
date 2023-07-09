@@ -61,8 +61,13 @@ def draw_grid(window, grid):
         for j in range(9):
             if grid[i][j]:
                 text = font.render(str(grid[i][j]), True, BLACK)
-                window.blit(text,
-                            (top_left_x + j * cell_size + cell_size // 3, top_left_y + i * cell_size + cell_size // 3))
+                window.blit(
+                    text,
+                    (
+                        top_left_x + j * cell_size + cell_size // 3,
+                        top_left_y + i * cell_size + cell_size // 3,
+                    ),
+                )
 
 
 def is_solved(grid):
@@ -98,7 +103,7 @@ def generate_puzzle(difficulty):
     return grid
 
 
-def draw_difficulty_menu(window):
+def draw_difficulty_menu(window, selected_difficulty):
     # Calculate top left corner of menu
     top_left_x = (window.get_size()[0] - 300) // 2
     top_left_y = (window.get_size()[1] - 300) // 2
@@ -115,16 +120,29 @@ def draw_difficulty_menu(window):
         mouse_pos = pygame.mouse.get_pos()
         if text_rect.collidepoint(mouse_pos):
             # Highlight menu item
-            pygame.draw.rect(window, WINDOW_BLUE, (top_left_x, top_left_y + i * 60, 300, 60))
-            text_rect = text.get_rect(center=(top_left_x + 150, top_left_y + 30 + i * 60))
+            pygame.draw.rect(
+                window, WINDOW_BLUE, (top_left_x, top_left_y + i * 60, 300, 60)
+            )
+            text_rect = text.get_rect(
+                center=(top_left_x + 150, top_left_y + 30 + i * 60)
+            )
+            selected_difficulty = i  # Update the selected difficulty
+
+        # Highlight selected difficulty
+        if selected_difficulty == i:
+            pygame.draw.rect(
+                window, WINDOW_BLUE, (top_left_x, top_left_y + i * 60, 300, 60)
+            )
 
         window.blit(text, text_rect)
 
     # Update display
     pygame.display.update()
 
+    return selected_difficulty
 
-def get_difficulty_from_events():
+
+def get_difficulty_from_events(selected_difficulty):
     difficulty = None
 
     for event in pygame.event.get():
@@ -132,24 +150,29 @@ def get_difficulty_from_events():
             pygame.quit()
             sys.exit()
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_e:
-                difficulty = 1
-            elif event.key == pygame.K_m:
-                difficulty = 2
-            elif event.key == pygame.K_h:
-                difficulty = 3
-            else:
-                difficulty = 4
+            if event.key == pygame.K_UP:  # Up arrow key
+                selected_difficulty = max(0, selected_difficulty - 1)
+            elif event.key == pygame.K_DOWN:  # Down arrow key
+                selected_difficulty = min(
+                    len(DIFFICULTIES) - 1, selected_difficulty + 1
+                )
+            elif (
+                event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER
+            ):  # Enter key
+                if 0 <= selected_difficulty < len(DIFFICULTIES):
+                    difficulty = (
+                        selected_difficulty + 1
+                    )  # Convert index to difficulty level
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # Get mouse position
             pos = pygame.mouse.get_pos()
             # Calculate selected difficulty
-            selected_difficulty = (pos[1] - CELL_SIZE) // CELL_SIZE
+            _selected_difficulty = (pos[1] - CELL_SIZE) // CELL_SIZE
             # Set difficulty based on selected difficulty
-            if 1 <= selected_difficulty <= 4:
-                difficulty = selected_difficulty
+            if 1 <= _selected_difficulty <= len(DIFFICULTIES):
+                difficulty = _selected_difficulty
 
-    return difficulty
+    return difficulty, selected_difficulty
 
 
 def draw_selected_cell(window, selected_row, selected_col):
@@ -170,26 +193,52 @@ def handle_game_events(selected_row, selected_col, grid):
             sys.exit()
         elif event.type == pygame.KEYDOWN:
             if event.key in (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT):
-                selected_row += int(event.key == pygame.K_DOWN) - int(event.key == pygame.K_UP)
-                selected_col += int(event.key == pygame.K_RIGHT) - int(event.key == pygame.K_LEFT)
+                selected_row += int(event.key == pygame.K_DOWN) - int(
+                    event.key == pygame.K_UP
+                )
+                selected_col += int(event.key == pygame.K_RIGHT) - int(
+                    event.key == pygame.K_LEFT
+                )
                 selected_row = max(0, min(8, selected_row))
                 selected_col = max(0, min(8, selected_col))
-            elif event.key in (
-                    pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8,
-                    pygame.K_9
+            elif (
+                event.key
+                in (
+                    pygame.K_1,
+                    pygame.K_2,
+                    pygame.K_3,
+                    pygame.K_4,
+                    pygame.K_5,
+                    pygame.K_6,
+                    pygame.K_7,
+                    pygame.K_8,
+                    pygame.K_9,
+                )
+                and grid[selected_row][selected_col] == 0
             ):
-                if grid[selected_row][selected_col] == 0:
-                    grid[selected_row][selected_col] = int(chr(event.key))
-            elif event.key == pygame.K_SPACE:
-                grid[selected_row][selected_col] = 0
+                grid[selected_row][selected_col] = int(chr(event.key))
+            elif (
+                event.key
+                in (
+                    pygame.K_KP1,
+                    pygame.K_KP2,
+                    pygame.K_KP3,
+                    pygame.K_KP4,
+                    pygame.K_KP5,
+                    pygame.K_KP6,
+                    pygame.K_KP7,
+                    pygame.K_KP8,
+                    pygame.K_KP9,
+                )
+                and grid[selected_row][selected_col] == 0
+            ):
+                grid[selected_row][selected_col] = int(event.unicode)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # Get mouse position
             pos = pygame.mouse.get_pos()
             # Calculate selected cell
             selected_col = pos[0] // CELL_SIZE
             selected_row = pos[1] // CELL_SIZE
-            # Toggle cell
-            grid[selected_row][selected_col] = 0 if grid[selected_row][selected_col] else 0
 
     return selected_row, selected_col
 
@@ -224,6 +273,7 @@ def handle_win_screen_events():
 def play():
     grid = None
     difficulty = None
+    selected_difficulty = 0  # Initialize selected difficulty to 0
     # Set initial selected cell
     selected_row = 0
     selected_col = 0
@@ -238,15 +288,21 @@ def play():
         # Draw background
         window.fill(WHITE)
         if game_state == "difficulty_menu":
-            draw_difficulty_menu(window)
-            difficulty = get_difficulty_from_events()
+            selected_difficulty = draw_difficulty_menu(
+                window, selected_difficulty
+            )  # Store the selected difficulty
+            difficulty, selected_difficulty = get_difficulty_from_events(
+                selected_difficulty
+            )
             if difficulty is not None:
                 game_state = "game"
                 grid = generate_puzzle(difficulty)
         elif game_state == "game":
             draw_grid(window, grid)
             draw_selected_cell(window, selected_row, selected_col)
-            selected_row, selected_col = handle_game_events(selected_row, selected_col, grid)
+            selected_row, selected_col = handle_game_events(
+                selected_row, selected_col, grid
+            )
             game_state = "win" if is_solved(grid) else "game"
 
             difficulty_str = ""
@@ -259,7 +315,9 @@ def play():
             elif difficulty == 4:
                 difficulty_str = "Expert"
 
-            pygame.display.set_caption(f"Sudoku ({difficulty_str}) - {elapsed_time_str}")
+            pygame.display.set_caption(
+                f"Sudoku ({difficulty_str}) - {elapsed_time_str}"
+            )
         elif game_state == "win":
             draw_win_screen(elapsed_time_str)
             if handle_win_screen_events():
