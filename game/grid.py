@@ -52,6 +52,7 @@ class Grid:
         self.font = font
         self.table = None
         self.original_table = None
+        self.solution_table = None
 
     def draw(self, selected_col: int, selected_row: int) -> None:
         """
@@ -135,6 +136,7 @@ class Grid:
         """
         self.table = [[0 for _ in range(9)] for _ in range(9)]
         solve(self.table)
+        self.solution_table = copy.deepcopy(self.table)
 
         difficulty_ranges = {1: (40, 50), 2: (30, 40), 3: (20, 30), 4: (10, 20)}
         num_removed = random.randint(*difficulty_ranges[difficulty])
@@ -150,3 +152,17 @@ class Grid:
         self.original_table = copy.deepcopy(self.table)
 
         return self.table
+
+    def is_solved(self):
+        """
+        Check if the Sudoku puzzle has been solved.
+
+        Returns:
+            bool: True if the puzzle is solved, False otherwise.
+        """
+        for i, row in enumerate(self.solution_table):
+            for j, cell in enumerate(row):
+                if cell != self.table[i][j]:
+                    return False
+
+        return True

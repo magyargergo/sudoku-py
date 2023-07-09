@@ -10,7 +10,7 @@ from game.grid import Grid
 from game.solver import solve
 
 
-class Game:
+class SudokuGame:
     """
     Represents the Sudoku game.
 
@@ -110,8 +110,10 @@ class Game:
         Returns:
             True if the game is solved correctly, False otherwise.
         """
-        return all(all(cell != 0 for cell in row) for row in self.grid.table) and solve(
-            self.grid.table
+        return (
+            self.grid.table is not None
+            and all(all(cell != 0 for cell in row) for row in self.grid.table)
+            and self.grid.is_solved()
         )
 
     def handle_difficulty_selection(self, selected_difficulty: int) -> int:
@@ -133,15 +135,16 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:  # Up arrow key
                     return max(0, selected_difficulty - 1)
-                elif event.key == pygame.K_DOWN:  # Down arrow key
+
+                if event.key == pygame.K_DOWN:  # Down arrow key
                     return min(len(DIFFICULTIES) - 1, selected_difficulty + 1)
-                elif (
-                    event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER
-                ):  # Enter key
-                    if 0 <= selected_difficulty < len(DIFFICULTIES):
-                        self.difficulty = (
-                            selected_difficulty + 1
-                        )  # Convert index to difficulty level
+
+                if (
+                    event.key in (pygame.K_RETURN, pygame.K_KP_ENTER)
+                    and 0 <= selected_difficulty < len(DIFFICULTIES)
+                ):
+                    # Convert index to difficulty level
+                    self.difficulty = selected_difficulty + 1
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # Get mouse position
                 pos = pygame.mouse.get_pos()
@@ -152,3 +155,23 @@ class Game:
                     self.difficulty = calculated_difficulty
 
         return selected_difficulty
+
+    def is_started(self) -> None:
+        """
+        Checks if the game has been started.
+
+        Returns:
+            bool: True if the game has been started, False otherwise.
+        """
+        return self.difficulty is not None
+
+    def finish(self) -> None:
+        """
+        Finish the game by resetting the difficulty.
+
+        This method sets the difficulty of the game to None, indicating that the game has finished.
+
+        Returns:
+            None
+        """
+        self.difficulty = None

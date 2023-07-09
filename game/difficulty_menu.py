@@ -71,7 +71,7 @@ class DifficultyMenu:
 
         pygame.display.update()
 
-    def set_selected_difficulty(self, selected_difficulty: int) -> None:
+    def update(self, selected_difficulty: int) -> None:
         """
         Sets the selected difficulty level.
 
