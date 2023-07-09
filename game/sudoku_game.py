@@ -1,7 +1,6 @@
 """
 Defines the Game class responsible for managing the Sudoku game logic.
 """
-import sys
 import time
 
 import pygame
