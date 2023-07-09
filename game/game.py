@@ -1,13 +1,38 @@
+"""
+Defines the Game class responsible for managing the Sudoku game logic.
+"""
 import sys
 
 import pygame
 
-from game.consts import CELL_SIZE, DIFFICULTIES
+from game import CELL_SIZE, DIFFICULTIES
 from game.grid import Grid
 from game.solver import solve
 
 
 class Game:
+    """
+    Represents the Sudoku game.
+
+    Args:
+        window (pygame.Surface): The Pygame window surface.
+        font (pygame.font.Font): The font used for rendering text.
+
+    Attributes:
+        window (pygame.Surface): The Pygame window surface.
+        selected_row (int): The index of the selected row.
+        selected_col (int): The index of the selected column.
+        difficulty (Optional[int]): The selected difficulty level.
+        grid (Grid): The Sudoku grid.
+
+    Methods:
+        start(difficulty: int): Starts the game with the specified difficulty.
+        update(): Updates the game state.
+        handle_events(): Handles Pygame events.
+        check_win() -> bool: Checks if the game is won.
+        handle_difficulty_selection(selected_difficulty: int) -> int: Handles difficulty selection.
+
+    """
     def __init__(self, window: pygame.Surface, font: pygame.font.Font) -> None:
         """
         Initializes the Game instance.

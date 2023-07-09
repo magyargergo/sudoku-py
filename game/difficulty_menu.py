@@ -1,9 +1,30 @@
+"""
+Defines the DifficultyMenu class for displaying and handling the difficulty menu.
+"""
+
 import pygame
 
-from game.consts import WINDOW_BLUE, CELL_SIZE, DIFFICULTIES, BLACK, WHITE
+from game import WINDOW_BLUE, CELL_SIZE, DIFFICULTIES, BLACK, WHITE
 
 
 class DifficultyMenu:
+    """
+    Represents a difficulty menu for the Sudoku game.
+
+    Args:
+       window (pygame.Surface): The Pygame window surface.
+       font (pygame.font.Font): The font used for rendering text.
+
+    Attributes:
+       window (pygame.Surface): The Pygame window surface.
+       selected_difficulty (int): The index of the selected difficulty.
+       font (pygame.font.Font): The font used for rendering text.
+
+    Methods:
+       draw(): Draws the difficulty menu on the window.
+       set_selected_difficulty(selected_difficulty: int): Sets the selected difficulty.
+       get_selected_difficulty() -> int: Returns the index of the selected difficulty.
+    """
     def __init__(self, window: pygame.Surface, font: pygame.font.Font) -> None:
         """
         Initializes the DifficultyMenu instance.

@@ -1,11 +1,26 @@
+"""
+Defines the WinnerScreen class responsible for displaying the winner screen.
+"""
 import sys
 
 import pygame
 
-from game.consts import BLACK
+from game import BLACK, WHITE
 
 
 class WinnerScreen:
+    """
+    Represents the winner screen.
+
+    Args:
+        window (pygame.Surface): The Pygame window surface.
+        font (pygame.font.Font): The font used for rendering text.
+        elapsed_time_str (str): The string representation of the elapsed time.
+
+    Methods:
+        draw(): Draws the winner screen on the window.
+        handle_events() -> bool: Handles Pygame events and returns True if the game should restart.
+    """
     def __init__(
         self, window: pygame.Surface, font: pygame.font.Font, elapsed_time_str: str
     ) -> None:

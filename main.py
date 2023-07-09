@@ -1,8 +1,11 @@
+"""
+Main script for Sudoku Game with difficulty menu, game logic, and winner screen.
+"""
 import time
 
 import pygame
 
-from game.consts import DIFFICULTIES
+from game import DIFFICULTIES
 from game.difficulty_menu import DifficultyMenu
 from game.game import Game
 from game.winner_screen import WinnerScreen
@@ -19,62 +22,47 @@ pygame.display.set_caption("Sudoku")
 font = pygame.font.Font(None, 36)
 
 
-class SudokuGame:
-    def __init__(self):
-        """
-        Initializes the SudokuGame instance.
-        """
-        self.difficulty_menu = DifficultyMenu(window, font)
-        self.game = Game(window, font)
+difficulty_menu = DifficultyMenu(window, font)
+game = Game(window, font)
+game_state = "difficulty_menu"
+start_time = time.perf_counter()
 
-    def play(self):
-        """
-        Starts the Sudoku game loop and manages the game state transitions.
-        """
-        game_state = "difficulty_menu"
-        start_time = time.perf_counter()
+elapsed_time_str = ""
+winner_screen = None
+selected_difficulty = 0
 
-        elapsed_time_str = ""
-        winner_screen = None
-        selected_difficulty = 0
+while True:
+    if winner_screen is not None:
+        elapsed_time = time.perf_counter() - start_time
+        elapsed_time_str = time.strftime("%M:%S", time.gmtime(elapsed_time))
 
-        while True:
-            if winner_screen is not None:
-                elapsed_time = time.perf_counter() - start_time
-                elapsed_time_str = time.strftime("%M:%S", time.gmtime(elapsed_time))
+    if game_state == "difficulty_menu":
+        difficulty_menu.set_selected_difficulty(selected_difficulty)
+        difficulty_menu.draw()
+        selected_difficulty = game.handle_difficulty_selection(
+            difficulty_menu.get_selected_difficulty()
+        )
+        if game.difficulty is not None:
+            game_state = "game"
+            game.start(game.difficulty)
 
-            if game_state == "difficulty_menu":
-                self.difficulty_menu.set_selected_difficulty(selected_difficulty)
-                self.difficulty_menu.draw()
-                selected_difficulty = self.game.handle_difficulty_selection(
-                    self.difficulty_menu.get_selected_difficulty()
-                )
-                if self.game.difficulty is not None:
-                    game_state = "game"
-                    self.game.start(self.game.difficulty)
+    elif game_state == "game":
+        game.update()
+        game.handle_events()
 
-            elif game_state == "game":
-                self.game.update()
-                self.game.handle_events()
+        if game.check_win():
+            winner_screen = WinnerScreen(window, font, elapsed_time_str)
+        else:
+            winner_screen = None
 
-                if self.game.check_win():
-                    winner_screen = WinnerScreen(window, font, elapsed_time_str)
-                else:
-                    winner_screen = None
+        difficulty_str = DIFFICULTIES[game.difficulty - 1]
+        pygame.display.set_caption(
+            f"Sudoku ({difficulty_str}) - {elapsed_time_str}"
+        )
 
-                difficulty_str = DIFFICULTIES[self.game.difficulty - 1]
-                pygame.display.set_caption(
-                    f"Sudoku ({difficulty_str}) - {elapsed_time_str}"
-                )
-
-            elif winner_screen is not None:
-                winner_screen.draw()
-                if winner_screen.handle_events():
-                    game_state = "difficulty_menu"
-                    self.game.selected_row = 0
-                    self.game.selected_col = 0
-
-
-# Create and play the game
-sudoku_game = SudokuGame()
-sudoku_game.play()
+    elif winner_screen is not None:
+        winner_screen.draw()
+        if winner_screen.handle_events():
+            game_state = "difficulty_menu"
+            game.selected_row = 0
+            game.selected_col = 0

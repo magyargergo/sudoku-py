@@ -31,14 +31,14 @@ def get_choices(grid, row, col):
     # Eliminate choices that appear in the same row
     choices -= set(grid[row])
     # Eliminate choices that appear in the same column
-    for r in range(9):
-        choices.discard(grid[r][col])
+    for row_idx in range(9):
+        choices.discard(grid[row_idx][col])
     # Eliminate choices that appear in the same 3x3 block
     block_row = row // 3
     block_col = col // 3
-    for r in range(block_row * 3, block_row * 3 + 3):
-        for c in range(block_col * 3, block_col * 3 + 3):
-            choices.discard(grid[r][c])
+    for row_idx in range(block_row * 3, block_row * 3 + 3):
+        for col_idx in range(block_col * 3, block_col * 3 + 3):
+            choices.discard(grid[row_idx][col_idx])
     return list(choices)
 
 
@@ -47,14 +47,14 @@ def is_valid(grid, row, col, num):
     if num in grid[row]:
         return False
     # Check if num appears in the same column
-    for r in range(9):
-        if grid[r][col] == num:
+    for row_idx in range(9):
+        if grid[row_idx][col] == num:
             return False
     # Check if num appears in the same 3x3 block
     block_row = row // 3
     block_col = col // 3
-    for r in range(block_row * 3, block_row * 3 + 3):
-        for c in range(block_col * 3, block_col * 3 + 3):
-            if grid[r][c] == num:
+    for row_idx in range(block_row * 3, block_row * 3 + 3):
+        for col_idx in range(block_col * 3, block_col * 3 + 3):
+            if grid[row_idx][col_idx] == num:
                 return False
     return True

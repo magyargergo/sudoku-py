@@ -1,14 +1,41 @@
+"""
+Defines the Grid class responsible for drawing and generating the Sudoku grid.
+"""
 import copy
 import random
 from typing import List
 
 import pygame
 
-from game.consts import WHITE, BLACK, CELL_SIZE, WINDOW_BLUE
+from game import WHITE, BLACK, CELL_SIZE, WINDOW_BLUE
 from game.solver import solve
 
 
 class Grid:
+    """
+    Represents the Sudoku grid.
+
+    Args:
+        window (pygame.Surface): The Pygame window surface.
+        font (pygame.font.Font): The font used for rendering text.
+
+    Attributes:
+        window (pygame.Surface): The Pygame window surface.
+        grid_size (int): The size of the grid.
+        cell_size (int): The size of each cell in the grid.
+        top_left_x (int): The x-coordinate of the top-left corner of the grid.
+        top_left_y (int): The y-coordinate of the top-left corner of the grid.
+        font (pygame.font.Font): The font used for rendering text.
+        table (List[List[int]]): The Sudoku grid table.
+        original_table (List[List[int]]): The original Sudoku grid table.
+
+    Methods:
+        draw(selected_col: int, selected_row: int): Draws the grid on the window.
+        draw_lines(): Draws the grid lines on the window.
+        draw_numbers(): Draws the numbers on the grid.
+        draw_selected_cell(selected_col: int, selected_row: int): Draws the selected cell.
+        generate_puzzle(difficulty: int) -> List[List[int]]: Generates a Sudoku puzzle.
+    """
     def __init__(self, window: pygame.Surface, font: pygame.font.Font) -> None:
         """
         Initializes the Grid instance.
