@@ -1,4 +1,5 @@
 import pygame
+
 from consts import WINDOW_BLUE, CELL_SIZE, DIFFICULTIES, BLACK, WHITE
 
 

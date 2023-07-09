@@ -21,10 +21,16 @@ font = pygame.font.Font(None, 36)
 
 class SudokuGame:
     def __init__(self):
+        """
+        Initializes the SudokuGame instance.
+        """
         self.difficulty_menu = DifficultyMenu(window, font)
         self.game = Game(window, font)
 
     def play(self):
+        """
+        Starts the Sudoku game loop and manages the game state transitions.
+        """
         game_state = "difficulty_menu"
         start_time = time.perf_counter()
 
