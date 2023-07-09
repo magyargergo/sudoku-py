@@ -74,10 +74,7 @@ class SudokuGame:
         Handles the events (keyboard and mouse) to update the game state accordingly.
         """
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
                 if event.key in (
                     pygame.K_UP,
                     pygame.K_DOWN,
