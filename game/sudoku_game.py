@@ -2,12 +2,12 @@
 Defines the Game class responsible for managing the Sudoku game logic.
 """
 import sys
+import time
 
 import pygame
 
 from game import CELL_SIZE, DIFFICULTIES
 from game.grid import Grid
-from game.solver import solve
 
 
 class SudokuGame:
@@ -30,8 +30,6 @@ class SudokuGame:
         update(): Updates the game state.
         handle_events(): Handles Pygame events.
         check_win() -> bool: Checks if the game is won.
-        handle_difficulty_selection(selected_difficulty: int) -> int: Handles difficulty selection.
-
     """
     def __init__(self, window: pygame.Surface, font: pygame.font.Font) -> None:
         """
@@ -46,6 +44,8 @@ class SudokuGame:
         self.selected_col = 0
         self.difficulty = None
         self.grid = Grid(window, font)
+        self.timer = None
+        self.formatted_timer = None
 
     def start(self, difficulty: int) -> None:
         """
@@ -56,12 +56,18 @@ class SudokuGame:
         """
         self.difficulty = difficulty
         self.grid.generate_puzzle(self.difficulty)
+        self.timer = time.perf_counter()
 
     def update(self) -> None:
         """
         Updates the game state and redraws the grid.
         """
         self.grid.draw(self.selected_col, self.selected_row)
+        elapsed_time = time.perf_counter() - self.timer
+        self.formatted_timer = time.strftime("%M:%S", time.gmtime(elapsed_time))
+        pygame.display.set_caption(
+            f"Sudoku ({DIFFICULTIES[self.difficulty - 1]}) - {self.formatted_timer}"
+        )
 
     def handle_events(self) -> None:
         """
@@ -115,46 +121,6 @@ class SudokuGame:
             and all(all(cell != 0 for cell in row) for row in self.grid.table)
             and self.grid.is_solved()
         )
-
-    def handle_difficulty_selection(self, selected_difficulty: int) -> int:
-        """
-        Handles the difficulty selection logic based on user input.
-
-        Args:
-            selected_difficulty: The index of the currently selected difficulty.
-
-        Returns:
-            The updated index of the selected difficulty after handling the user input.
-        """
-        self.difficulty = None
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:  # Up arrow key
-                    return max(0, selected_difficulty - 1)
-
-                if event.key == pygame.K_DOWN:  # Down arrow key
-                    return min(len(DIFFICULTIES) - 1, selected_difficulty + 1)
-
-                if (
-                    event.key in (pygame.K_RETURN, pygame.K_KP_ENTER)
-                    and 0 <= selected_difficulty < len(DIFFICULTIES)
-                ):
-                    # Convert index to difficulty level
-                    self.difficulty = selected_difficulty + 1
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                # Get mouse position
-                pos = pygame.mouse.get_pos()
-                # Calculate selected difficulty
-                calculated_difficulty = (pos[1] - CELL_SIZE) // CELL_SIZE
-                # Set difficulty based on selected difficulty
-                if 1 <= calculated_difficulty <= len(DIFFICULTIES):
-                    self.difficulty = calculated_difficulty
-
-        return selected_difficulty
 
     def is_started(self) -> None:
         """
