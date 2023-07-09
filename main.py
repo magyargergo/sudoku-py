@@ -2,10 +2,10 @@ import time
 
 import pygame
 
-from consts import DIFFICULTIES
-from difficulty_menu import DifficultyMenu
-from game import Game
-from winner_screen import WinnerScreen
+from game.consts import DIFFICULTIES
+from game.difficulty_menu import DifficultyMenu
+from game.game import Game
+from game.winner_screen import WinnerScreen
 
 # Initialize Pygame
 pygame.init()

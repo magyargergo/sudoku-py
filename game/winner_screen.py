@@ -2,7 +2,7 @@ import sys
 
 import pygame
 
-from consts import BLACK
+from game.consts import BLACK
 
 
 class WinnerScreen:
