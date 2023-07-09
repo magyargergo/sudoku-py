@@ -84,9 +84,9 @@ class Game:
                         pygame.K_LEFT: (-1, 0),
                         pygame.K_RIGHT: (1, 0),
                     }
-                    dx, dy = direction[event.key]
-                    self.selected_row = max(0, min(8, self.selected_row + dy))
-                    self.selected_col = max(0, min(8, self.selected_col + dx))
+                    d_x, d_y = direction[event.key]
+                    self.selected_row = max(0, min(8, self.selected_row + d_y))
+                    self.selected_col = max(0, min(8, self.selected_col + d_x))
                 elif (
                     pygame.K_1 <= event.key <= pygame.K_9
                     or pygame.K_KP1 <= event.key <= pygame.K_KP9
