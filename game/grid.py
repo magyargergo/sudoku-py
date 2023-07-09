@@ -4,8 +4,8 @@ from typing import List
 
 import pygame
 
-from consts import WHITE, BLACK, CELL_SIZE, WINDOW_BLUE
-from solver import solve
+from game.consts import WHITE, BLACK, CELL_SIZE, WINDOW_BLUE
+from game.solver import solve
 
 
 class Grid:

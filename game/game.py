@@ -2,9 +2,9 @@ import sys
 
 import pygame
 
-from consts import CELL_SIZE, DIFFICULTIES
-from grid import Grid
-from solver import solve
+from game.consts import CELL_SIZE, DIFFICULTIES
+from game.grid import Grid
+from game.solver import solve
 
 
 class Game:

@@ -1,6 +1,6 @@
 import pygame
 
-from consts import WINDOW_BLUE, CELL_SIZE, DIFFICULTIES, BLACK, WHITE
+from game.consts import WINDOW_BLUE, CELL_SIZE, DIFFICULTIES, BLACK, WHITE
 
 
 class DifficultyMenu:
