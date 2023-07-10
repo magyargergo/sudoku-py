@@ -1,11 +1,9 @@
 """
 Defines the Grid class responsible for drawing and generating the Sudoku grid.
 """
-import copy
 import random
-from typing import List
-
 import pygame
+import numpy
 
 from game import WHITE, BLACK, CELL_SIZE, WINDOW_BLUE
 from game.solver import solve
@@ -124,7 +122,7 @@ class Grid:
             self.window, WINDOW_BLUE, (pos_x, pos_y, CELL_SIZE, CELL_SIZE), 4
         )
 
-    def generate_puzzle(self, difficulty: int) -> List[List[int]]:
+    def generate_puzzle(self, difficulty: int) -> None:
         """
         Generates a Sudoku puzzle of the specified difficulty level.
 
@@ -134,9 +132,9 @@ class Grid:
         Returns:
             The generated Sudoku puzzle as a 2D list representing the grid.
         """
-        self.table = [[0 for _ in range(9)] for _ in range(9)]
+        self.table = numpy.array([[0 for _ in range(9)] for _ in range(9)])
         solve(self.table)
-        self.solution_table = copy.deepcopy(self.table)
+        self.solution_table = self.table.copy()
 
         difficulty_ranges = {1: (40, 50), 2: (30, 40), 3: (20, 30), 4: (10, 20)}
         num_removed = random.randint(*difficulty_ranges[difficulty])
@@ -149,9 +147,7 @@ class Grid:
                 col = random.randint(0, 8)
             self.table[row][col] = 0
 
-        self.original_table = copy.deepcopy(self.table)
-
-        return self.table
+        self.original_table = self.table.copy()
 
     def is_solved(self):
         """
