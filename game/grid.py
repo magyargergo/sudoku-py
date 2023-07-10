@@ -136,7 +136,7 @@ class Grid:
         solve(self.table)
         self.solution_table = self.table.copy()
 
-        difficulty_ranges = {1: (40, 50), 2: (30, 40), 3: (20, 30), 4: (10, 20)}
+        difficulty_ranges = {4: (40, 50), 3: (30, 40), 2: (20, 30), 1: (10, 20)}
         num_removed = random.randint(*difficulty_ranges[difficulty])
 
         for _ in range(num_removed):
