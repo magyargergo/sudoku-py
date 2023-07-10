@@ -134,16 +134,14 @@ class Grid:
             The generated Sudoku puzzle as a 2D list representing the grid.
         """
         # Create an empty Sudoku grid
-        grid = [[0] * 9 for _ in range(9)]
+        self.table = numpy.zeros((9, 9), numpy.uint)
 
         # Fill in values for the first row
         for i in range(9):
-            grid[0][i] = (i % 9) + 1
+            self.table[0][i] = (i % 9) + 1
 
         # Shuffle the values in the first row
-        random.shuffle(grid[0])
-
-        self.table = numpy.array(grid)
+        random.shuffle(self.table[0])
 
         solve(self.table)
         self.solution_table = self.table.copy()
