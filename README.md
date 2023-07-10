@@ -19,6 +19,7 @@ This Sudoku game allows players to play and solve Sudoku puzzles on their comput
 
 - Python 3.x
 - Pygame
+- PyNum
 
 ## Installation
 
