@@ -2,8 +2,9 @@
 Defines the Grid class responsible for drawing and generating the Sudoku grid.
 """
 import random
-import pygame
+
 import numpy
+import pygame
 
 from game import WHITE, BLACK, CELL_SIZE, WINDOW_BLUE
 from game.solver import solve
@@ -132,7 +133,18 @@ class Grid:
         Returns:
             The generated Sudoku puzzle as a 2D list representing the grid.
         """
-        self.table = numpy.array([[0 for _ in range(9)] for _ in range(9)])
+        # Create an empty Sudoku grid
+        grid = [[0] * 9 for _ in range(9)]
+
+        # Fill in values for the first row
+        for i in range(9):
+            grid[0][i] = (i % 9) + 1
+
+        # Shuffle the values in the first row
+        random.shuffle(grid[0])
+
+        self.table = numpy.array(grid)
+
         solve(self.table)
         self.solution_table = self.table.copy()
 
