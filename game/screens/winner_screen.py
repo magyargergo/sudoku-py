@@ -1,14 +1,13 @@
 """
 Defines the WinnerScreen class responsible for displaying the winner screen.
 """
-import sys
-
 import pygame
 
-from game import BLACK, WHITE
+from game import BLACK
+from game.screen import Screen
 
 
-class WinnerScreen:
+class WinnerScreen(Screen):
     """
     Represents the winner screen.
 
@@ -32,15 +31,14 @@ class WinnerScreen:
             font: The Pygame font used for rendering text.
             elapsed_time_str: The string representation of the elapsed time.
         """
-        self.window = window
-        self.font = font
+        super().__init__(window, font)
         self.elapsed_time_str = elapsed_time_str
 
-    def draw(self) -> None:
+    def display(self) -> None:
         """
         Draws the winner screen on the game window.
         """
-        self.window.fill(WHITE)
+        super().display()
         top_left_x = (self.window.get_size()[0] - 200) // 2
         top_left_y = (self.window.get_size()[1] - 50) // 2
         text = self.font.render("You won!", True, BLACK)
@@ -49,17 +47,15 @@ class WinnerScreen:
         self.window.blit(text, (top_left_x, top_left_y + 20))
         pygame.display.update()
 
-    def handle_events(self) -> bool:
+    def handle_events(self) -> None:
         """
         Handles events on the winner screen.
 
         Returns:
             A boolean indicating if the user pressed the return key to restart the game.
         """
+        super().handle_events()
+
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                return True
-        return False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                pass

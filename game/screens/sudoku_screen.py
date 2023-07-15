@@ -1,5 +1,5 @@
 """
-Defines the Game class responsible for managing the Sudoku game logic.
+Defines the SudokuGame class responsible for managing the Sudoku game logic.
 """
 import time
 
@@ -7,9 +7,10 @@ import pygame
 
 from game import CELL_SIZE, DIFFICULTIES
 from game.grid import Grid
+from game.screen import Screen
 
 
-class SudokuGame:
+class SudokuScreen(Screen):
     """
     Represents the Sudoku game.
 
@@ -23,26 +24,32 @@ class SudokuGame:
         selected_col (int): The index of the selected column.
         difficulty (Optional[int]): The selected difficulty level.
         grid (Grid): The Sudoku grid.
+        timer (float): The start time of the game.
+        formatted_timer (str): The formatted timer string.
 
     Methods:
-        start(difficulty: int): Starts the game with the specified difficulty.
-        update(): Updates the game state.
-        handle_events(): Handles Pygame events.
+        start(difficulty: int) -> None: Starts the game with the specified difficulty.
+        display() -> None: Updates the game state and redraws the grid.
+        handle_events() -> None: Handles Pygame events.
+        is_valid() -> bool: Checks if the selected cell is valid for input.
         check_win() -> bool: Checks if the game is won.
+        is_started() -> bool: Checks if the game has been started.
+        finish() -> None: Finishes the game by resetting the difficulty.
     """
+
     def __init__(self, window: pygame.Surface, font: pygame.font.Font) -> None:
         """
-        Initializes the Game instance.
+        Initializes the SudokuGame instance.
 
         Args:
-            window: The Pygame Surface representing the game window.
-            font: The Pygame font used for rendering text.
+            window (pygame.Surface): The Pygame surface representing the game window.
+            font (pygame.font.Font): The Pygame font used for rendering text.
         """
-        self.window = window
+        super().__init__(window, font)
+        self.grid = Grid(window, font)
         self.selected_row = 0
         self.selected_col = 0
         self.difficulty = None
-        self.grid = Grid(window, font)
         self.timer = None
         self.formatted_timer = None
 
@@ -51,19 +58,20 @@ class SudokuGame:
         Starts a new game with the specified difficulty level.
 
         Args:
-            difficulty: The difficulty level of the game (1 = Easy, 2 = Medium, 3 = Hard, 4 = Expert).
+            difficulty (int): The difficulty level of the game (1 = Easy, 2 = Medium, 3 = Hard, 4 = Expert).
         """
         self.difficulty = difficulty
         self.grid.generate_puzzle(self.difficulty)
         self.timer = time.perf_counter()
 
-    def update(self) -> None:
+    def display(self) -> None:
         """
         Updates the game state and redraws the grid.
         """
+        super().display()
         self.grid.draw(self.selected_col, self.selected_row)
-        elapsed_time = time.perf_counter() - self.timer
-        self.formatted_timer = time.strftime("%M:%S", time.gmtime(elapsed_time))
+        elapsed_time = time.gmtime(time.perf_counter() - self.timer)
+        self.formatted_timer = time.strftime("%M:%S", elapsed_time)
         pygame.display.set_caption(
             f"Sudoku ({DIFFICULTIES[self.difficulty - 1]}) - {self.formatted_timer}"
         )
@@ -72,7 +80,9 @@ class SudokuGame:
         """
         Handles the events (keyboard and mouse) to update the game state accordingly.
         """
-        for event in pygame.event.get():
+        super().handle_events()
+
+        for event in self.pygame_events:
             if event.type == pygame.KEYDOWN:
                 if event.key in (
                     pygame.K_UP,
@@ -93,10 +103,7 @@ class SudokuGame:
                     pygame.K_1 <= event.key <= pygame.K_9
                     or pygame.K_KP1 <= event.key <= pygame.K_KP9
                 ):
-                    if (
-                        self.grid.original_table[self.selected_row][self.selected_col]
-                        == 0
-                    ):
+                    if self.is_valid():
                         self.grid.table[self.selected_row][self.selected_col] = int(
                             event.unicode
                         )
@@ -105,20 +112,25 @@ class SudokuGame:
                 self.selected_col = pos[0] // CELL_SIZE
                 self.selected_row = pos[1] // CELL_SIZE
 
+    def is_valid(self) -> bool:
+        """
+        Checks if the selected cell is valid for input.
+
+        Returns:
+            bool: True if the selected cell is valid for input, False otherwise.
+        """
+        return self.grid.original_table[self.selected_row][self.selected_col] == 0
+
     def check_win(self) -> bool:
         """
         Checks if the player has won the game.
 
         Returns:
-            True if the game is solved correctly, False otherwise.
+            bool: True if the game is solved correctly, False otherwise.
         """
-        return (
-            self.grid.table is not None
-            and all(all(cell != 0 for cell in row) for row in self.grid.table)
-            and self.grid.is_solved()
-        )
+        return self.grid.is_solved()
 
-    def is_started(self) -> None:
+    def is_started(self) -> bool:
         """
         Checks if the game has been started.
 
@@ -129,7 +141,7 @@ class SudokuGame:
 
     def finish(self) -> None:
         """
-        Finish the game by resetting the difficulty.
+        Finishes the game by resetting the difficulty.
 
         This method sets the difficulty of the game to None, indicating that the game has finished.
 

@@ -1,12 +1,10 @@
 """
 Defines the Grid class responsible for drawing and generating the Sudoku grid.
 """
-import random
-
 import numpy
 import pygame
 
-from game import WHITE, BLACK, CELL_SIZE, WINDOW_BLUE
+from game import BLACK, CELL_SIZE, WINDOW_BLUE
 from game.solver import solve
 
 
@@ -25,23 +23,25 @@ class Grid:
         top_left_x (int): The x-coordinate of the top-left corner of the grid.
         top_left_y (int): The y-coordinate of the top-left corner of the grid.
         font (pygame.font.Font): The font used for rendering text.
-        table (List[List[int]]): The Sudoku grid table.
-        original_table (List[List[int]]): The original Sudoku grid table.
+        table (numpy.ndarray): The Sudoku grid table.
+        original_table (numpy.ndarray): The original Sudoku grid table.
+        solution_table (numpy.ndarray): The solution table for the Sudoku grid.
 
     Methods:
-        draw(selected_col: int, selected_row: int): Draws the grid on the window.
-        draw_lines(): Draws the grid lines on the window.
-        draw_numbers(): Draws the numbers on the grid.
-        draw_selected_cell(selected_col: int, selected_row: int): Draws the selected cell.
-        generate_puzzle(difficulty: int) -> List[List[int]]: Generates a Sudoku puzzle.
+        draw(selected_col: int, selected_row: int) -> None: Draws the grid on the window.
+        draw_lines() -> None: Draws the grid lines on the window.
+        draw_numbers() -> None: Draws the numbers on the grid.
+        draw_selected_cell(selected_col: int, selected_row: int) -> None: Draws the selected cell.
+        generate_puzzle(difficulty: int) -> None: Generates a Sudoku puzzle.
+        is_solved() -> bool: Checks if the puzzle has been solved.
     """
     def __init__(self, window: pygame.Surface, font: pygame.font.Font) -> None:
         """
         Initializes the Grid instance.
 
         Args:
-            window: The Pygame Surface representing the game window.
-            font: The Pygame font used for rendering text.
+            window (pygame.Surface): The Pygame surface representing the game window.
+            font (pygame.font.Font): The Pygame font used for rendering text.
         """
         self.window = window
         self.grid_size = min(window.get_size())
@@ -58,10 +58,9 @@ class Grid:
         Draws the grid on the game window.
 
         Args:
-            selected_col: The column index of the currently selected cell.
-            selected_row: The row index of the currently selected cell.
+            selected_col (int): The column index of the currently selected cell.
+            selected_row (int): The row index of the currently selected cell.
         """
-        self.window.fill(WHITE)
         self.draw_lines()
         self.draw_numbers()
         self.draw_selected_cell(selected_col, selected_row)
@@ -72,20 +71,18 @@ class Grid:
         Draws the grid lines on the game window.
         """
         for i in range(10):
-            start_pos = (self.top_left_x, self.top_left_y + i * self.cell_size)
-            end_pos = (
-                self.top_left_x + self.grid_size,
-                self.top_left_y + i * self.cell_size,
-            )
+            # Determine line width (3 for every 3rd line, 1 for others)
             line_width = 3 if i % 3 == 0 else 1
-            pygame.draw.line(self.window, BLACK, start_pos, end_pos, line_width)
 
-            start_pos = (self.top_left_x + i * self.cell_size, self.top_left_y)
-            end_pos = (
-                self.top_left_x + i * self.cell_size,
-                self.top_left_y + self.grid_size,
-            )
-            pygame.draw.line(self.window, BLACK, start_pos, end_pos, line_width)
+            # Vertical lines
+            vertical_start_pos = (self.top_left_x + i * self.cell_size, self.top_left_y)
+            vertical_end_pos = (self.top_left_x + i * self.cell_size, self.top_left_y + self.grid_size)
+            pygame.draw.line(self.window, BLACK, vertical_start_pos, vertical_end_pos, line_width)
+
+            # Horizontal lines
+            horizontal_start_pos = (self.top_left_x, self.top_left_y + i * self.cell_size)
+            horizontal_end_pos = (self.top_left_x + self.grid_size, self.top_left_y + i * self.cell_size)
+            pygame.draw.line(self.window, BLACK, horizontal_start_pos, horizontal_end_pos, line_width)
 
     def draw_numbers(self) -> None:
         """
@@ -93,14 +90,11 @@ class Grid:
 
         The original numbers are displayed in blue, while the user-entered numbers are displayed in black.
         """
-        for i in range(9):
-            for j in range(9):
-                if self.table[i][j]:
-                    text = self.font.render(
-                        str(self.table[i][j]),
-                        True,
-                        BLACK if self.original_table[i][j] != 0 else WINDOW_BLUE,
-                    )
+        for i, row in enumerate(self.table):
+            for j, cell in enumerate(row):
+                if cell:
+                    color = BLACK if self.original_table[i][j] != 0 else WINDOW_BLUE
+                    text = self.font.render(str(cell), True, color)
                     text_rect = text.get_rect(
                         center=(
                             self.top_left_x + j * self.cell_size + self.cell_size // 2,
@@ -114,8 +108,8 @@ class Grid:
         Draws a highlight around the currently selected cell.
 
         Args:
-            selected_col: The column index of the currently selected cell.
-            selected_row: The row index of the currently selected cell.
+            selected_col (int): The column index of the currently selected cell.
+            selected_row (int): The row index of the currently selected cell.
         """
         pos_x = selected_col * CELL_SIZE
         pos_y = selected_row * CELL_SIZE
@@ -128,47 +122,38 @@ class Grid:
         Generates a Sudoku puzzle of the specified difficulty level.
 
         Args:
-            difficulty: The difficulty level of the puzzle (1 = Easy, 2 = Medium, 3 = Hard, 4 = Expert).
+            difficulty (int): The difficulty level of the puzzle (1 = Easy, 2 = Medium, 3 = Hard, 4 = Expert).
 
         Returns:
-            The generated Sudoku puzzle as a 2D list representing the grid.
+            None
         """
         # Create an empty Sudoku grid
-        self.table = numpy.zeros((9, 9), numpy.uint)
+        self.table = numpy.zeros((9, 9), dtype=numpy.uint)
 
         # Fill in values for the first row
-        for i in range(9):
-            self.table[0][i] = (i % 9) + 1
-
-        # Shuffle the values in the first row
-        random.shuffle(self.table[0])
+        self.table[0] = numpy.arange(1, 10)
+        numpy.random.shuffle(self.table[0])
 
         solve(self.table)
         self.solution_table = self.table.copy()
 
         difficulty_ranges = {4: (40, 50), 3: (30, 40), 2: (20, 30), 1: (10, 20)}
-        num_removed = random.randint(*difficulty_ranges[difficulty])
+        num_removed = numpy.random.randint(*difficulty_ranges[difficulty])
 
-        for _ in range(num_removed):
-            row = random.randint(0, 8)
-            col = random.randint(0, 8)
-            while self.table[row][col] == 0:
-                row = random.randint(0, 8)
-                col = random.randint(0, 8)
-            self.table[row][col] = 0
+        indices = numpy.random.choice(81, num_removed, replace=False)
+        self.table.flat[indices] = 0
 
         self.original_table = self.table.copy()
 
-    def is_solved(self):
+    def is_solved(self) -> bool:
         """
-        Check if the Sudoku puzzle has been solved.
+        Checks if the Sudoku puzzle has been solved.
 
         Returns:
             bool: True if the puzzle is solved, False otherwise.
         """
-        for i, row in enumerate(self.solution_table):
-            for j, cell in enumerate(row):
-                if cell != self.table[i][j]:
-                    return False
-
-        return True
+        return (
+            self.table is not None
+            and numpy.all(self.table != 0)
+            and numpy.array_equal(self.table, self.solution_table)
+        )
