@@ -77,11 +77,9 @@ class WinnerScreen(Screen):
     def handle_events(self) -> None:
         """
         Handles events on the winner screen.
-
-        Returns:
-            A boolean indicating if the user pressed the return key to restart the game.
         """
         super().handle_events()
 
         for event in self.pygame_events:
-            self.restart = event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                self.restart = True
