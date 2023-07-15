@@ -12,10 +12,6 @@ class Screen:
     """
     Represents a screen in the game.
 
-    Args:
-        window (pygame.Surface): The Pygame window surface.
-        font (pygame.font.Font): The font used for rendering text.
-
     Attributes:
         window (pygame.Surface): The Pygame window surface.
         font (pygame.font.Font): The font used for rendering text.
@@ -26,16 +22,12 @@ class Screen:
         handle_events(): Handles Pygame events.
 
     """
-    def __init__(self, window: pygame.Surface, font: pygame.font.Font) -> None:
+    def __init__(self) -> None:
         """
         Initializes the Screen instance.
-
-        Args:
-            window: The Pygame Surface representing the game window.
-            font: The Pygame font used for rendering text.
         """
-        self.window = window
-        self.font = font
+        self.window = pygame.display.set_mode((540, 540))
+        self.font = pygame.font.Font(None, 36)
         self.pygame_events = []
 
     def display(self) -> None:

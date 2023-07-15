@@ -4,7 +4,7 @@ Defines the Grid class responsible for drawing and generating the Sudoku grid.
 import numpy
 import pygame
 
-from game import BLACK, CELL_SIZE, WINDOW_BLUE
+from game import BLACK, WINDOW_BLUE
 from game.solver import solve
 
 
@@ -111,10 +111,10 @@ class Grid:
             selected_col (int): The column index of the currently selected cell.
             selected_row (int): The row index of the currently selected cell.
         """
-        pos_x = selected_col * CELL_SIZE
-        pos_y = selected_row * CELL_SIZE
+        pos_x = selected_col * self.cell_size
+        pos_y = selected_row * self.cell_size
         pygame.draw.rect(
-            self.window, WINDOW_BLUE, (pos_x, pos_y, CELL_SIZE, CELL_SIZE), 4
+            self.window, WINDOW_BLUE, (pos_x, pos_y, self.cell_size, self.cell_size), 4
         )
 
     def generate_puzzle(self, difficulty: int) -> None:

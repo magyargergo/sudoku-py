@@ -10,23 +10,15 @@ from game.screens.winner_screen import WinnerScreen
 # Initialize Pygame
 pygame.init()
 
-# Set window size and title
-size = width, height = 540, 540
-window = pygame.display.set_mode(size)
-pygame.display.set_caption("Sudoku")
-
-# Set font
-font = pygame.font.Font(None, 36)
-
-difficulty_menu = DifficultyMenuScreen(window, font)
-sudoku_screen = SudokuScreen(window, font)
+difficulty_menu = DifficultyMenuScreen()
+sudoku_screen = SudokuScreen()
 
 while True:
     if sudoku_screen.is_started():
         sudoku_screen.display()
         sudoku_screen.handle_events()
         if sudoku_screen.check_win():
-            winner_screen = WinnerScreen(window, font, sudoku_screen.formatted_timer)
+            winner_screen = WinnerScreen(sudoku_screen.formatted_timer)
             winner_screen.display()
             winner_screen.handle_events()
     else:

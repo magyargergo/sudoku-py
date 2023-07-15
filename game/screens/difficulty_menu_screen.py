@@ -3,7 +3,7 @@ Defines the DifficultyMenu class for displaying and handling the difficulty menu
 """
 import pygame
 
-from game import WINDOW_BLUE, CELL_SIZE, DIFFICULTIES, BLACK, WHITE
+from game import WINDOW_BLUE, DIFFICULTIES, BLACK, WHITE
 from game.screens.screen import Screen
 
 
@@ -11,14 +11,8 @@ class DifficultyMenuScreen(Screen):
     """
     Represents a difficulty menu for the Sudoku game.
 
-    Args:
-       window (pygame.Surface): The Pygame window surface.
-       font (pygame.font.Font): The font used for rendering text.
-
     Attributes:
-       window (pygame.Surface): The Pygame window surface.
        selected_difficulty (int): The index of the selected difficulty.
-       font (pygame.font.Font): The font used for rendering text.
        text_rects (List[pygame.Rect]): The rectangles for displaying the difficulty text.
 
     Methods:
@@ -29,15 +23,12 @@ class DifficultyMenuScreen(Screen):
                                                     or None if no valid selection is made.
     """
 
-    def __init__(self, window: pygame.Surface, font: pygame.font.Font) -> None:
+    def __init__(self) -> None:
         """
-        Initializes the DifficultyMenu instance.
+        Initializes the DifficultyMenuScreen instance.
+        """
+        super().__init__()
 
-        Args:
-            window (pygame.Surface): The Pygame surface representing the game window.
-            font (pygame.font.Font): The Pygame font used for rendering text.
-        """
-        super().__init__(window, font)
         self.selected_difficulty = 0
         self.text_rects = []
 
@@ -47,11 +38,14 @@ class DifficultyMenuScreen(Screen):
         """
         super().display()
 
-        top_left_x = (self.window.get_size()[0] - 5 * CELL_SIZE) // 2
-        top_left_y = (self.window.get_size()[1] - 5 * CELL_SIZE) // 2
+        grid_size = min(self.window.get_size())
+        cell_size = grid_size // 9
+
+        top_left_x = (self.window.get_size()[0] - 5 * cell_size) // 2
+        top_left_y = (self.window.get_size()[1] - 5 * cell_size) // 2
 
         pygame.draw.rect(
-            self.window, WHITE, (top_left_x, top_left_y, 5 * CELL_SIZE, 5 * CELL_SIZE)
+            self.window, WHITE, (top_left_x, top_left_y, 5 * cell_size, 5 * cell_size)
         )
 
         self.text_rects.clear()
@@ -59,7 +53,7 @@ class DifficultyMenuScreen(Screen):
         for i, difficulty in enumerate(DIFFICULTIES):
             text = self.font.render(difficulty, True, BLACK)
             text_rect = text.get_rect(
-                center=(top_left_x + 150, top_left_y + CELL_SIZE // 2 + i * CELL_SIZE)
+                center=(top_left_x + 150, top_left_y + cell_size // 2 + i * cell_size)
             )
 
             self.text_rects.append(text_rect)
@@ -68,12 +62,13 @@ class DifficultyMenuScreen(Screen):
                 pygame.draw.rect(
                     self.window,
                     WINDOW_BLUE,
-                    (top_left_x, top_left_y + i * CELL_SIZE, 5 * CELL_SIZE, CELL_SIZE),
+                    (top_left_x, top_left_y + i * cell_size, 5 * cell_size, cell_size),
                 )
 
             self.window.blit(text, text_rect)
 
         pygame.display.update()
+        pygame.display.set_caption("Sudoku")
 
     def get_selected_difficulty(self) -> int:
         """

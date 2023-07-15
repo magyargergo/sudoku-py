@@ -3,7 +3,6 @@ Defines public constants for the game.
 """
 from typing import Tuple, List
 
-CELL_SIZE: int = 60
 DIFFICULTIES: List[str] = ["Easy", "Medium", "Hard", "Expert"]
 
 BLACK: Tuple[int, int, int] = (0, 0, 0)

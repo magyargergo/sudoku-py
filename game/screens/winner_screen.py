@@ -12,17 +12,13 @@ class WinnerScreen(Screen):
     Represents the winner screen.
 
     Args:
-        window (pygame.Surface): The Pygame window surface.
-        font (pygame.font.Font): The font used for rendering text.
         elapsed_time_str (str): The string representation of the elapsed time.
 
     Methods:
         draw(): Draws the winner screen on the window.
         handle_events() -> bool: Handles Pygame events and returns True if the game should restart.
     """
-    def __init__(
-        self, window: pygame.Surface, font: pygame.font.Font, elapsed_time_str: str
-    ) -> None:
+    def __init__(self, elapsed_time_str: str) -> None:
         """
         Initializes the WinnerScreen instance.
 
@@ -31,7 +27,8 @@ class WinnerScreen(Screen):
             font: The Pygame font used for rendering text.
             elapsed_time_str: The string representation of the elapsed time.
         """
-        super().__init__(window, font)
+        super().__init__()
+
         self.elapsed_time_str = elapsed_time_str
 
     def display(self) -> None:
@@ -39,6 +36,7 @@ class WinnerScreen(Screen):
         Draws the winner screen on the game window.
         """
         super().display()
+
         top_left_x = (self.window.get_size()[0] - 200) // 2
         top_left_y = (self.window.get_size()[1] - 50) // 2
         text = self.font.render("You won!", True, BLACK)

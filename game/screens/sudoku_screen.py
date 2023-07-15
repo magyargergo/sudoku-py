@@ -5,7 +5,7 @@ import time
 
 import pygame
 
-from game import CELL_SIZE, DIFFICULTIES
+from game import DIFFICULTIES
 from game.grid import Grid
 from game.screens.screen import Screen
 
@@ -14,12 +14,7 @@ class SudokuScreen(Screen):
     """
     Represents the Sudoku game.
 
-    Args:
-        window (pygame.Surface): The Pygame window surface.
-        font (pygame.font.Font): The font used for rendering text.
-
     Attributes:
-        window (pygame.Surface): The Pygame window surface.
         selected_row (int): The index of the selected row.
         selected_col (int): The index of the selected column.
         difficulty (Optional[int]): The selected difficulty level.
@@ -37,16 +32,13 @@ class SudokuScreen(Screen):
         finish() -> None: Finishes the game by resetting the difficulty.
     """
 
-    def __init__(self, window: pygame.Surface, font: pygame.font.Font) -> None:
+    def __init__(self) -> None:
         """
         Initializes the SudokuGame instance.
-
-        Args:
-            window (pygame.Surface): The Pygame surface representing the game window.
-            font (pygame.font.Font): The Pygame font used for rendering text.
         """
-        super().__init__(window, font)
-        self.grid = Grid(window, font)
+        super().__init__()
+
+        self.grid = Grid(self.window, self.font)
         self.selected_row = 0
         self.selected_col = 0
         self.difficulty = None
@@ -109,8 +101,8 @@ class SudokuScreen(Screen):
                         )
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                self.selected_col = pos[0] // CELL_SIZE
-                self.selected_row = pos[1] // CELL_SIZE
+                self.selected_col = pos[0] // self.grid.cell_size
+                self.selected_row = pos[1] // self.grid.cell_size
 
     def is_valid(self) -> bool:
         """
