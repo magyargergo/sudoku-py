@@ -8,6 +8,7 @@ import pygame
 from game import DIFFICULTIES
 from game.grid import Grid
 from game.screens.screen import Screen
+from game.utils import formatted_time
 
 
 class SudokuScreen(Screen):
@@ -20,7 +21,6 @@ class SudokuScreen(Screen):
         difficulty (Optional[int]): The selected difficulty level.
         grid (Grid): The Sudoku grid.
         timer (float): The start time of the game.
-        formatted_timer (str): The formatted timer string.
 
     Methods:
         start(difficulty: int) -> None: Starts the game with the specified difficulty.
@@ -43,7 +43,6 @@ class SudokuScreen(Screen):
         self.selected_col = 0
         self.difficulty = None
         self.timer = None
-        self.formatted_timer = None
 
     def start(self, difficulty: int) -> None:
         """
@@ -62,10 +61,8 @@ class SudokuScreen(Screen):
         """
         super().display()
         self.grid.draw(self.selected_col, self.selected_row)
-        elapsed_time = time.gmtime(time.perf_counter() - self.timer)
-        self.formatted_timer = time.strftime("%M:%S", elapsed_time)
         pygame.display.set_caption(
-            f"Sudoku ({DIFFICULTIES[self.difficulty - 1]}) - {self.formatted_timer}"
+            f"Sudoku ({DIFFICULTIES[self.difficulty - 1]}) - {formatted_time(self.timer)}"
         )
 
     def handle_events(self) -> None:
