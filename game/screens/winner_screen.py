@@ -4,7 +4,7 @@ Defines the WinnerScreen class responsible for displaying the winner screen.
 import pygame
 
 from game import BLACK
-from game.screen import Screen
+from game.screens.screen import Screen
 
 
 class WinnerScreen(Screen):

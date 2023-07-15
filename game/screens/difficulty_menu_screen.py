@@ -4,7 +4,7 @@ Defines the DifficultyMenu class for displaying and handling the difficulty menu
 import pygame
 
 from game import WINDOW_BLUE, CELL_SIZE, DIFFICULTIES, BLACK, WHITE
-from game.screen import Screen
+from game.screens.screen import Screen
 
 
 class DifficultyMenuScreen(Screen):

@@ -7,7 +7,7 @@ import pygame
 
 from game import CELL_SIZE, DIFFICULTIES
 from game.grid import Grid
-from game.screen import Screen
+from game.screens.screen import Screen
 
 
 class SudokuScreen(Screen):
