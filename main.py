@@ -14,13 +14,13 @@ difficulty_menu = DifficultyMenuScreen()
 sudoku_screen = SudokuScreen()
 
 while True:
-    if sudoku_screen.is_started():
+    if sudoku_screen.check_win():
+        winner_screen = WinnerScreen(sudoku_screen.formatted_timer)
+        winner_screen.display()
+        winner_screen.handle_events()
+    elif sudoku_screen.is_started():
         sudoku_screen.display()
         sudoku_screen.handle_events()
-        if sudoku_screen.check_win():
-            winner_screen = WinnerScreen(sudoku_screen.formatted_timer)
-            winner_screen.display()
-            winner_screen.handle_events()
     else:
         difficulty_menu.display()
         difficulty_menu.handle_events()
