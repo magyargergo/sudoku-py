@@ -35,6 +35,7 @@ class Grid:
         generate_puzzle(difficulty: int) -> None: Generates a Sudoku puzzle.
         is_solved() -> bool: Checks if the puzzle has been solved.
     """
+
     def __init__(self, window: pygame.Surface, font: pygame.font.Font) -> None:
         """
         Initializes the Grid instance.
@@ -76,13 +77,26 @@ class Grid:
 
             # Vertical lines
             vertical_start_pos = (self.top_left_x + i * self.cell_size, self.top_left_y)
-            vertical_end_pos = (self.top_left_x + i * self.cell_size, self.top_left_y + self.grid_size)
-            pygame.draw.line(self.window, BLACK, vertical_start_pos, vertical_end_pos, line_width)
+            vertical_end_pos = (
+                self.top_left_x + i * self.cell_size,
+                self.top_left_y + self.grid_size,
+            )
+            pygame.draw.line(
+                self.window, BLACK, vertical_start_pos, vertical_end_pos, line_width
+            )
 
             # Horizontal lines
-            horizontal_start_pos = (self.top_left_x, self.top_left_y + i * self.cell_size)
-            horizontal_end_pos = (self.top_left_x + self.grid_size, self.top_left_y + i * self.cell_size)
-            pygame.draw.line(self.window, BLACK, horizontal_start_pos, horizontal_end_pos, line_width)
+            horizontal_start_pos = (
+                self.top_left_x,
+                self.top_left_y + i * self.cell_size,
+            )
+            horizontal_end_pos = (
+                self.top_left_x + self.grid_size,
+                self.top_left_y + i * self.cell_size,
+            )
+            pygame.draw.line(
+                self.window, BLACK, horizontal_start_pos, horizontal_end_pos, line_width
+            )
 
     def draw_numbers(self) -> None:
         """
@@ -137,7 +151,7 @@ class Grid:
         solve(self.table)
         self.solution_table = self.table.copy()
 
-        difficulty_ranges = {4: (40, 50), 3: (30, 40), 2: (20, 30), 1: (10, 20)}
+        difficulty_ranges = [(10, 20), (20, 30), (30, 40), (40, 50)]
         num_removed = numpy.random.randint(*difficulty_ranges[difficulty])
 
         indices = numpy.random.choice(81, num_removed, replace=False)

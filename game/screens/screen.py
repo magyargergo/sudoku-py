@@ -18,10 +18,12 @@ class Screen:
         pygame_events (List[pygame.event.Event]): The list of Pygame events.
 
     Methods:
-        display(): Displays the screen.
-        handle_events(): Handles Pygame events.
+        display() -> None: Displays the screen.
+        handle_events() -> None: Handles Pygame events.
+        quit() -> None: Quits the game and exits the program.
 
     """
+
     def __init__(self) -> None:
         """
         Initializes the Screen instance.
@@ -48,5 +50,17 @@ class Screen:
         for event in pygame.event.get():
             self.pygame_events.append(event)
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                self.quit()
+
+    def quit(self) -> None:
+        """
+        Quits the game and exits the program.
+
+        This method calls the `pygame.quit()` function to quit the Pygame framework,
+        and then calls the `sys.exit()` function to exit the program.
+
+        Returns:
+            None
+        """
+        pygame.quit()
+        sys.exit()

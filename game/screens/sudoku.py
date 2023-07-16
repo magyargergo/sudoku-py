@@ -1,5 +1,9 @@
 """
-Defines the SudokuGame class responsible for managing the Sudoku game logic.
+The `sudoku` module defines the SudokuScreen class for managing the Sudoku game logic.
+
+Classes:
+    SudokuScreen: Represents the Sudoku game.
+
 """
 import time
 
@@ -49,7 +53,7 @@ class SudokuScreen(Screen):
         Starts a new game with the specified difficulty level.
 
         Args:
-            difficulty (int): The difficulty level of the game (1 = Easy, 2 = Medium, 3 = Hard, 4 = Expert).
+            difficulty (int): The difficulty level of the game (0 = Easy, 1 = Medium, 2 = Hard, 3 = Expert).
         """
         self.difficulty = difficulty
         self.grid.generate_puzzle(self.difficulty)
@@ -62,7 +66,7 @@ class SudokuScreen(Screen):
         super().display()
         self.grid.draw(self.selected_col, self.selected_row)
         pygame.display.set_caption(
-            f"Sudoku ({DIFFICULTIES[self.difficulty - 1]}) - {formatted_time(self.timer)}"
+            f"Sudoku ({DIFFICULTIES[self.difficulty]}) - {formatted_time(self.timer)}"
         )
 
     def handle_events(self) -> None:

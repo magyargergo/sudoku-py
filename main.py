@@ -3,9 +3,9 @@ Main script for Sudoku Game with difficulty menu, game logic, and winner screen.
 """
 import pygame
 
-from game.screens.difficulty_menu_screen import DifficultyMenuScreen
-from game.screens.sudoku_screen import SudokuScreen
-from game.screens.winner_screen import WinnerScreen
+from game.screens.difficulty_menu import DifficultyMenuScreen
+from game.screens.sudoku import SudokuScreen
+from game.screens.winner import WinnerScreen
 
 # Initialize Pygame
 pygame.init()
@@ -15,10 +15,13 @@ while True:
     sudoku_screen = SudokuScreen()
     winner_screen = WinnerScreen()
 
-    while not winner_screen.restart:
+    while True:
         if sudoku_screen.check_win():
             winner_screen.display()
             winner_screen.handle_events()
+            selected_item = winner_screen.handle_item_selection()
+            if selected_item is not None:
+                break
         elif sudoku_screen.is_started():
             sudoku_screen.display()
             sudoku_screen.handle_events()
@@ -27,6 +30,6 @@ while True:
         else:
             difficulty_menu.display()
             difficulty_menu.handle_events()
-            difficulty = difficulty_menu.handle_difficulty_selection()
-            if difficulty is not None:
-                sudoku_screen.start(difficulty)
+            selected_item = difficulty_menu.handle_item_selection()
+            if selected_item is not None:
+                sudoku_screen.start(selected_item)

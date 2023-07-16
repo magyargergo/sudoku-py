@@ -82,7 +82,7 @@ def is_valid_move(board: np.ndarray, row: int, col: int, num: int) -> bool:
     # Check if the number already exists in the 3x3 subgrid
     subgrid_row = 3 * (row // 3)
     subgrid_col = 3 * (col // 3)
-    subgrid = board[subgrid_row:subgrid_row + 3, subgrid_col:subgrid_col + 3]
+    subgrid = board[subgrid_row : subgrid_row + 3, subgrid_col : subgrid_col + 3]
     if num in subgrid:
         return False
 
