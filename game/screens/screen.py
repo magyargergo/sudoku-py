@@ -6,9 +6,10 @@ import sys
 import pygame
 
 from game import WHITE
+from game.logger import Logger
 
 
-class Screen:
+class Screen(Logger):
     """
     Represents a screen in the game.
 
@@ -28,6 +29,7 @@ class Screen:
         """
         Initializes the Screen instance.
         """
+        super().__init__()
         self.window = pygame.display.set_mode((540, 540))
         self.font = pygame.font.Font(None, 36)
         self.pygame_events = []

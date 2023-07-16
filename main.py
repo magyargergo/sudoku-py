@@ -1,11 +1,22 @@
 """
 Main script for Sudoku Game with difficulty menu, game logic, and winner screen.
 """
+import logging
+
 import pygame
 
 from game.screens.difficulty_menu import DifficultyMenuScreen
 from game.screens.sudoku import SudokuScreen
 from game.screens.winner import WinnerScreen
+
+# Set the logging configuration
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(),
+    ],
+)
 
 # Initialize Pygame
 pygame.init()

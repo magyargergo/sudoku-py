@@ -5,10 +5,11 @@ import numpy
 import pygame
 
 from game import BLACK, WINDOW_BLUE
+from game.logger import Logger
 from game.solver import solve
 
 
-class Grid:
+class Grid(Logger):
     """
     Represents the Sudoku grid.
 
@@ -28,12 +29,14 @@ class Grid:
         solution_table (numpy.ndarray): The solution table for the Sudoku grid.
 
     Methods:
-        draw(selected_col: int, selected_row: int) -> None: Draws the grid on the window.
+        draw(col: int, row: int) -> None: Draws the grid on the window.
         draw_lines() -> None: Draws the grid lines on the window.
         draw_numbers() -> None: Draws the numbers on the grid.
-        draw_selected_cell(selected_col: int, selected_row: int) -> None: Draws the selected cell.
+        draw_selected_cell(col: int, row: int) -> None: Draws the selected cell.
         generate_puzzle(difficulty: int) -> None: Generates a Sudoku puzzle.
         is_solved() -> bool: Checks if the puzzle has been solved.
+        update(row: int, col: int, value: int) -> None:
+            Updates the Sudoku table with the provided cell value at the specified position.
     """
 
     def __init__(self, window: pygame.Surface, font: pygame.font.Font) -> None:
@@ -44,6 +47,7 @@ class Grid:
             window (pygame.Surface): The Pygame surface representing the game window.
             font (pygame.font.Font): The Pygame font used for rendering text.
         """
+        super().__init__()
         self.window = window
         self.grid_size = min(window.get_size())
         self.cell_size = self.grid_size // 9
@@ -159,6 +163,8 @@ class Grid:
 
         self.original_table = self.table.copy()
 
+        self.log_debug(f"Solved puzzle:\n{self.solution_table}")
+
     def is_solved(self) -> bool:
         """
         Checks if the Sudoku puzzle has been solved.
@@ -166,8 +172,32 @@ class Grid:
         Returns:
             bool: True if the puzzle is solved, False otherwise.
         """
-        return (
+        is_solved = (
             self.table is not None
             and numpy.all(self.table != 0)
             and numpy.array_equal(self.table, self.solution_table)
         )
+        if is_solved:
+            self.log_debug("Puzzle solved")
+        return is_solved
+
+    def update(self, row: int, col: int, value: int) -> None:
+        """
+        Updates the Sudoku table with the provided cell value at the specified position.
+
+        If the value at the specified position in the original table is 0 (empty cell),
+        the cell value is updated in the current table. The update is logged using the logger.
+
+        Args:
+            row (int): The row index of the selected cell.
+            col (int): The column index of the selected cell.
+            value (int): The value to be placed in the cell.
+
+        Returns:
+            None
+        """
+        if self.original_table[row][col] == 0:
+            self.table[row][col] = value
+            self.log_debug(f"Number {value} placed at ({row}, {col})")
+        else:
+            self.log_warning(f"Number {value} cannot be placed at ({row}, {col})")

@@ -30,10 +30,8 @@ class SudokuScreen(Screen):
         start(difficulty: int) -> None: Starts the game with the specified difficulty.
         display() -> None: Updates the game state and redraws the grid.
         handle_events() -> None: Handles Pygame events.
-        is_valid() -> bool: Checks if the selected cell is valid for input.
         check_win() -> bool: Checks if the game is won.
         is_started() -> bool: Checks if the game has been started.
-        finish() -> None: Finishes the game by resetting the difficulty.
     """
 
     def __init__(self) -> None:
@@ -58,6 +56,7 @@ class SudokuScreen(Screen):
         self.difficulty = difficulty
         self.grid.generate_puzzle(self.difficulty)
         self.timer = time.perf_counter()
+        self.log_info(f"Game started with difficulty: {DIFFICULTIES[self.difficulty]}")
 
     def display(self) -> None:
         """
@@ -96,23 +95,13 @@ class SudokuScreen(Screen):
                     pygame.K_1 <= event.key <= pygame.K_9
                     or pygame.K_KP1 <= event.key <= pygame.K_KP9
                 ):
-                    if self.is_valid():
-                        self.grid.table[self.selected_row][self.selected_col] = int(
-                            event.unicode
-                        )
+                    self.grid.update(
+                        self.selected_row, self.selected_col, int(event.unicode)
+                    )
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 self.selected_col = pos[0] // self.grid.cell_size
                 self.selected_row = pos[1] // self.grid.cell_size
-
-    def is_valid(self) -> bool:
-        """
-        Checks if the selected cell is valid for input.
-
-        Returns:
-            bool: True if the selected cell is valid for input, False otherwise.
-        """
-        return self.grid.original_table[self.selected_row][self.selected_col] == 0
 
     def check_win(self) -> bool:
         """
@@ -131,14 +120,3 @@ class SudokuScreen(Screen):
             bool: True if the game has been started, False otherwise.
         """
         return self.difficulty is not None
-
-    def finish(self) -> None:
-        """
-        Finishes the game by resetting the difficulty.
-
-        This method sets the difficulty of the game to None, indicating that the game has finished.
-
-        Returns:
-            None
-        """
-        self.difficulty = None
